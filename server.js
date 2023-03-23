@@ -21,25 +21,37 @@ app.get("/", function (req, res) {
   });
 });
 
-app.get("/customer", function (req, res) {
-  connection.query("SELECT * FROM a1_customer", function (err, results) {
-    console.log(results);
-    res.json(results);
-  });
+app.get("/top_products", function (req, res) {
+  connection.query(
+    "SELECT a1_product.* , sum(quantity) as quantity_sum FROM a1_product,a1_order WHERE a1_order.idcam = a1_product.idcam GROUP BY a1_order.idcam ORDER BY quantity_sum desc;",
+    function (err, results) {
+      console.log(results); //แสดงผลที่ console
+      res.json(results); //ตอบกลับ request
+    }
+  );
 });
 
-app.get("/order", function (req, res) {
-  connection.query("SELECT * FROM a1_order", function (err, results) {
-    console.log(results);
-    res.json(results);
-  });
+app.get("/top_customers", function (req, res) {
+  connection.query(
+    "SELECT a1_customer.*, sum(quantity*price) as price_sum FROM a1_customer,a1_order,a1_product WHERE a1_order.cid = a1_customer.cid AND a1_order.idcam = a1_product.idcam GROUP BY a1_order.cid ORDER BY price_sum DESC;",
+    function (err, results) {
+      console.log(results); //แสดงผลที่ console
+      res.json(results); //ตอบกลับ request
+    }
+  );
 });
 
-app.get("/product", function (req, res) {
-  connection.query("SELECT * FROM a1_product", function (err, results) {
-    console.log(results);
-    res.json(results);
-  });
+app.post("/orders", function (req, res) {
+  const values = req.body;
+  console.log(values);
+  connection.query(
+    "INSERT INTO a1_order (orid, idcam, cid, quantity) VALUES ?",
+    [values],
+    function (err, results) {
+      console.log(results); //แสดงผลที่ console
+      res.json(results); //ตอบกลับ request
+    }
+  );
 });
 
 app.listen(5000, () => {
