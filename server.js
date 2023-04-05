@@ -21,6 +21,25 @@ app.get("/", function (req, res) {
   });
 });
 
+// app.get("/orders", function (req, res) {
+//   connection.query(
+//     `SELECT O.orid, C.firstname AS customer, P.name AS Product_Name, O.quantity
+//       FROM a1_order
+//       LEFT JOIN a1_customer C ON O.ID_Customer = C.ID_Customer
+//       LEFT JOIN a1_Products P ON O.ID_Product = P.ID_Product; `,
+//     function (err, results) {
+//       res.json(results);
+//     }
+//   );
+// });
+
+app.get("/customers", function (req, res) {
+  connection.query("SELECT * FROM a1_customer", function (err, results) {
+    console.log(results); //แสดงผลที่ console
+    res.json(results); //ตอบกลับ request
+  });
+});
+
 app.get("/top_products", function (req, res) {
   connection.query(
     "SELECT a1_product.* , sum(quantity) as quantity_sum FROM a1_product,a1_order WHERE a1_order.idcam = a1_product.idcam GROUP BY a1_order.idcam ORDER BY quantity_sum desc;",
@@ -45,9 +64,10 @@ app.post("/orders", function (req, res) {
   const values = req.body;
   console.log(values);
   connection.query(
-    "INSERT INTO a1_order (orid, idcam, cid, quantity) VALUES ?",
+    "INSERT INTO a1_order (orid, cid, idcam , quantity) VALUES ?",
     [values],
     function (err, results) {
+      console.log(err);
       console.log(results); //แสดงผลที่ console
       res.json(results); //ตอบกลับ request
     }
