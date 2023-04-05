@@ -40,6 +40,13 @@ app.get("/customers", function (req, res) {
   });
 });
 
+app.get("/products", function (req, res) {
+  connection.query("SELECT * FROM a1_product", function (err, results) {
+    console.log(results); //แสดงผลที่ console
+    res.json(results); //ตอบกลับ request
+  });
+});
+
 app.get("/top_products", function (req, res) {
   connection.query(
     "SELECT a1_product.* , sum(quantity) as quantity_sum FROM a1_product,a1_order WHERE a1_order.idcam = a1_product.idcam GROUP BY a1_order.idcam ORDER BY quantity_sum desc;",
